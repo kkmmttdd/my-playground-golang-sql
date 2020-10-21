@@ -58,5 +58,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// insert statement
+	insertStmt, err := db.Prepare("INSERT INTO hello.samples (count, name) VALUES (?, ?)")
+	res, err := insertStmt.Exec(2, "name2")
+	fmt.Println(res.LastInsertId())
 	defer db.Close()
 }
