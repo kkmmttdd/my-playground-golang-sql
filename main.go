@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 )
@@ -11,6 +12,7 @@ var (
 	//name string
 	host string
 )
+
 
 func main() {
 	db, err := sql.Open("mysql",
@@ -32,11 +34,24 @@ func main() {
 			log.Fatal(err)
 		}
 		//log.Println(id, name)
-		log.Println(host)
+		//log.Println(host)
 	}
 	err = rows.Err()
 	if err != nil {
 		log.Fatal(err)
+	}
+	// prepared query
+	stmt, err := db.Prepare("select host from mysql.user where host like ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	preparedRows, err := stmt.Query("localhost")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for preparedRows.Next() {
+		preparedRows.Scan(&host)
+		fmt.Println(host)
 	}
 	if err != nil {
 		// do something here
